@@ -54,6 +54,12 @@ pip install sounddevice scipy
 pip install keyboard 
 pip install pyautogui 
 pip install config
+pip install cx-Freeze
+```
+
+- Compile .py to .exe
+```
+cxfreeze DeskBot.py --base-name=Win32GUI
 ```
 
 - After completing the steps, you need to place all resulting files (including all files related to Settings.exe) in one location, then run Settings.exe
@@ -127,6 +133,7 @@ keyboard
 pyautogui 
 config
 virtualenv
+cx-Freeze
 ```
 
 FAQ
