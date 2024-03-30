@@ -58,6 +58,8 @@ pip install config
 
 - After completing the steps, you need to place all resulting files (including all files related to Settings.exe) in one location, then run Settings.exe
 
+**After clicking the "Save" button, DeskBot.exe will start. Additionally, a shortcut for the DeskBot.exe program will be created in the startup folder (\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup).**
+
 Commands
 -----------
 
