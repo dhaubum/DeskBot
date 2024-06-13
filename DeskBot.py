@@ -60,6 +60,19 @@ for admin_id in adm:
 message_text = f"бот запущен"
 log_to_file_and_console(message_text)
 
+def log_message(message):
+    message_text = "-------------\n"
+    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
+    message_text += f"text: {message.text}\n"
+    message_text += f"timestamp: {datetime.datetime.now()}\n"
+    message_text += "-------------\n"
+    log_to_file_and_console(message_text)
+
+def log_messagen(message):
+    bot.send_message(message.chat.id, 'ты кто?')
+    message_text = f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+    log_to_file_and_console(message_text)
+
 @bot.message_handler(commands=['start'])
 def welcome(message):
     message_text = "-------------\n"
@@ -82,14 +95,9 @@ def help_command(message):
     help_thread = threading.Thread(target=send_help_message, args=(message,))
     help_thread.start()
 def send_help_message(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'ты кто?')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         help_message = "список доступных команд:\n\n"\
                        "/move x y - переместить мышь на указанные координаты (x, y)\n\n"\
@@ -115,41 +123,27 @@ def send_help_message(message):
                        "/open - нужно указать полный путь для открытия программы/файла или ссылку на страницу в браузере\n\n"\
                        "/close - нужно указать имя программы для ее закрытия"
         bot.reply_to(message, help_message)
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['switchoff'])
 def switchoff(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
 
         bot.send_message(message.chat.id, 'выключаю...')
         os.system("shutdown /p")
         bot.send_message(message.chat.id, 'выключил')
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['play'])
 def play_command(message):
     play_thread = threading.Thread(target=start_recording, args=(message,))
     play_thread.start()
 def start_recording(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     chat_id = message.chat.id
-    log_to_file_and_console(message_text)
     if chat_id not in adm:
-        bot.send_message(chat_id, 'не дозволено')
-        message_text = f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
-        log_to_file_and_console(message_text)
+        log_messagen(message)
         return
     try:
         _, amount = message.text.split()
@@ -175,14 +169,9 @@ def send_presskeys_command(message):
     presskeys_thread = threading.Thread(target=handle_press_keys, args=(message,))
     presskeys_thread.start()
 def handle_press_keys(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
-    if message.chat.id not in adm and message.chat.id not in adm1:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+    log_message(message)
+    if message.chat.id not in adm:
+        log_messagen(message)
     else:
         try:
             if message.text == '/presskeys help':
@@ -210,23 +199,16 @@ def handle_press_keys(message):
                 bot.send_message(message.chat.id, f"Клавиши {'+'.join(keys)} были нажаты и отпущены.")
         except IndexError:
             bot.send_message(message.chat.id, "Нужно прописать сочетание клавиш через + или же только одну клавишу")
-    log_to_file_and_console(message_text)
 
 
 @bot.message_handler(commands=['screenshot'])
 def screenshot_command(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         screenshot_thread = threading.Thread(target=screenshot, args=(message,))
         screenshot_thread.start()
-    log_to_file_and_console(message_text)
 def screenshot(message):
     screenshot = pyautogui.screenshot()
     mouse_x, mouse_y = pyautogui.position()
@@ -249,14 +231,9 @@ def send_photo_command(message):
     photo_thread = threading.Thread(target=capture_photo, args=(message,))
     photo_thread.start()
 def capture_photo(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         cap = cv2.VideoCapture(0)
         ret, frame = cap.read()
@@ -269,7 +246,6 @@ def capture_photo(message):
             os.remove('webcam_photo.jpg')
         else:
             bot.reply_to(message, "Не удалось получить фотографию с вебкамеры.")
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['programs'])
 def programs_command(message):
@@ -277,16 +253,9 @@ def programs_command(message):
     programs_thread.start()
 
 def get_running_programs(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
-    log_to_file_and_console(message_text)
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text = f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
-        log_to_file_and_console(message_text)
+        log_messagen(message)
     else:
         with open('disp.txt', 'w') as a:
             sys.stdout = a
@@ -304,14 +273,9 @@ def get_running_programs(message):
 
 @bot.message_handler(commands=['move'])
 def move_mouse(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         try:
             _, x, y = message.text.split()
@@ -320,18 +284,12 @@ def move_mouse(message):
             bot.reply_to(message, f"мышь перемещена на ({x}, {y})")
         except ValueError:
             bot.reply_to(message, "неправильный формат координат. Используйте команду в формате /move x y")
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['mouse'])
 def move_cursor(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         try:
             command = message.text.lower()
@@ -355,63 +313,39 @@ def move_cursor(message):
                 bot.reply_to(message, "Не удалось распознать команду.")
         except ValueError:
             bot.reply_to(message, "Неправильный формат команды. Используйте команду вида '/mouse вправо X'.")
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['click'])
 def click_mouse(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         pyautogui.click()
         bot.reply_to(message, "нажата левая кнопка мыши")
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['doubleclick'])
 def click_mouse(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         pyautogui.doubleClick()
         bot.reply_to(message, "нажата левая кнопка мыши")
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['rightclick'])
 def right_click_mouse(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         pyautogui.rightClick()
         bot.reply_to(message, "нажата правая кнопка мыши")
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['text'])
 def text(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         try:
             _, text1 = message.text.split()
@@ -420,18 +354,12 @@ def text(message):
             bot.reply_to(message, f"был введен текст: {text1}")
         except ValueError:
             bot.reply_to(message, "неправильный формат. Используйте команду в формате /text текст")
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['scroll'])
 def scroll_mouse(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         try:
             _, amount = message.text.split()
@@ -440,18 +368,13 @@ def scroll_mouse(message):
             bot.reply_to(message, f"колесико мыши прокручено на {amount} шагов")
         except ValueError:
             bot.reply_to(message, "неправильный формат количества шагов. Используйте команду в формате /scroll amount")
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['setvolume'])
 def setvolume(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
         bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         if len(message.text.split()) < 2:
             bot.send_message(message.chat.id, 'не указано значение громкости')
@@ -466,36 +389,24 @@ def setvolume(message):
             bot.send_message(message.chat.id, 'громкость не установлена')
         elif volume < 0:
             bot.send_message(message.chat.id, 'громкость не установлена')
-    log_to_file_and_console(message_text)
 
 current_directory = os.getcwd()
 
 @bot.message_handler(commands=['ls'])
 def list_files(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         files = os.listdir(current_directory)
         file_list = "\n".join(files)
         bot.reply_to(message, f'Файлы в текущей директории:\n{file_list}')
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['cd'])
 def change_directory(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         global current_directory
         args = message.text.split(maxsplit=1)
@@ -514,23 +425,15 @@ def change_directory(message):
                 bot.reply_to(message, f'Директория {new_directory} не существует.')
 
         bot.reply_to(message, f'Текущая директория: {current_directory}')
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(commands=['download'])
 def download_file_command(message):
     download_thread = threading.Thread(target=download_file, args=(message,))
     download_thread.start()
 def download_file(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
-    log_to_file_and_console(message_text)
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text = f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
-        log_to_file_and_console(message_text)
+        log_messagen(message)
     else:
         global current_directory
         args = message.text.split(maxsplit=1)
@@ -554,36 +457,23 @@ waiting_for_upload = {}
 
 @bot.message_handler(commands=['upload'])
 def upload_file(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'не дозволено')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         chat_id = message.chat.id
         waiting_for_upload[chat_id] = True
         bot.reply_to(message, "Теперь вы можете загрузить файл. Отправьте файл, который хотите загрузить.")
-    log_to_file_and_console(message_text)
 
 @bot.message_handler(content_types=['document'])
 def handle_document(message):
     handle_thread = threading.Thread(target=handle_document_thread, args=(message,))
     handle_thread.start()
 def handle_document_thread(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     chat_id = message.chat.id
-    log_to_file_and_console(message_text)
     if chat_id not in adm:
-        bot.send_message(chat_id, 'не дозволено')
-        message_text = f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
-        log_to_file_and_console(message_text)
+        log_messagen(message)
         return
 
     global current_directory
@@ -615,17 +505,10 @@ def delete_file_command(message):
     delete_thread = threading.Thread(target=delete_file, args=(message,))
     delete_thread.start()
 def delete_file(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     chat_id = message.chat.id
-    log_to_file_and_console(message_text)
     if chat_id not in adm:
-        bot.send_message(chat_id, 'не дозволено')
-        message_text = f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
-        log_to_file_and_console(message_text)
+        log_messagen(message)
         return
 
     global current_directory
@@ -695,14 +578,9 @@ def close_file(message, process_name):
 
 @bot.message_handler(commands=['close'])
 def execute_close_file_command(message):
-    message_text = "-------------\n"
-    message_text += f"from_user: {message.from_user.first_name} {message.from_user.last_name}\n"
-    message_text += f"text: {message.text}\n"
-    message_text += f"timestamp: {datetime.datetime.now()}\n"
-    message_text += "-------------\n"
+    log_message(message)
     if message.chat.id not in adm:
-        bot.send_message(message.chat.id, 'ты кто?')
-        message_text += f"нет доступа у: {message.from_user.first_name} {message.from_user.last_name}\n"
+        log_messagen(message)
     else:
         if len(message.text.split()) > 1:
             process_name = message.text.split()[1]
@@ -710,7 +588,6 @@ def execute_close_file_command(message):
             execute_thread.start()
         else:
             bot.reply_to(message, 'Укажите имя процесса для закрытия.')
-    log_to_file_and_console(message_text)
 
 def bot_polling():
     bot.polling()
